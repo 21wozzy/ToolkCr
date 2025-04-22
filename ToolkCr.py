@@ -51,24 +51,27 @@ def install_all_packages():
 
 # Funciones de cada herramienta de Termux
 def nmap_scan():
-    print("Iniciando Nmap... Nmap es una herramienta de escaneo de redes que detecta dispositivos y servicios en una red.")
-    print("Funciona enviando paquetes a una IP y analizando las respuestas para determinar qué puertos están abiertos y qué servicios están activos.")
-    os.system("nmap -v")
-
+    target = input("Enter the IP/URL to scan: ")
+    print(f"Scanning {target} using Nmap...")
+    print(f"Running: nmap -v {target}")
+    os.system(f"nmap -v {target}")
+    print("Scan completed.")
+    
 def metasploit_console():
     print("Iniciando Metasploit... Metasploit es un framework para pruebas de penetración y explotación de vulnerabilidades.")
     print("Permite a los usuarios buscar vulnerabilidades, explotarlas y generar payloads para obtener acceso no autorizado a un sistema.")
     os.system("msfconsole")
 
 def ddos_attack():
-    print("Iniciando ataque DDoS... El ataque DDoS intenta sobrecargar un servidor o red enviando tráfico masivo para que el servidor quede fuera de servicio.")
-    print("Esta herramienta genera un gran volumen de solicitudes para agotar los recursos de un servidor.")
-    os.system("ddos-attack")
+    target = input("Enter the IP/URL for DDoS attack: ")
+    bots = input("Enter the number of bots to use: ")
+    print(f"Starting DDoS attack on {target} using {bots} bots...")
+    os.system(f"ddos-attack {target} {bots}")
 
 def dos_attack():
-    print("Iniciando ataque DoS... Un ataque de denegación de servicio intenta hacer que un servicio sea inaccesible mediante el envío de tráfico excesivo.")
-    print("A diferencia del DDoS, DoS es un ataque de un solo origen, pero igualmente busca interrumpir la disponibilidad del servicio.")
-    os.system("dos")
+    target = input("Enter the IP/URL for DoS attack: ")
+    print(f"Starting DoS attack on {target}...")
+    os.system(f"dos {target}")
 
 def aircrack_ng():
     print("Iniciando Aircrack-ng... Aircrack-ng es una suite de herramientas para auditoría de redes Wi-Fi.")
@@ -91,24 +94,24 @@ def credits_info():
     os.system("credits")
 
 def scan_ip():
-    print("Escaneando IP... Usamos herramientas para verificar la disponibilidad de una IP en la red.")
-    print("Este escaneo verifica si una dirección IP está activa y qué servicios están corriendo en ella, útil para mapear redes locales.")
-    os.system("scan-ip")
+    target = input("Enter the IP to scan: ")
+    print(f"Scanning IP {target}...")
+    os.system(f"ping {target}")
 
 def web_status():
-    print("Comprobando el estado web... Usamos herramientas como `curl` para verificar si un sitio web está activo.")
-    print("La herramienta realiza una solicitud HTTP a la URL y verifica si la respuesta es exitosa (200 OK) o si hay algún error (404, 500, etc.).")
-    os.system("web-status")
+    target = input("Enter the website URL to check status: ")
+    print(f"Checking the status of {target}...")
+    os.system(f"curl -Is {target}")
 
 def anti_ddos_check():
-    print("Verificando protección anti-DDoS... Se revisan configuraciones para mitigar ataques DDoS.")
-    print("Esta herramienta verifica la existencia de mecanismos como firewalls y servidores proxy que ayudan a proteger a un sitio web de ataques de denegación de servicio distribuidos.")
-    os.system("anti-ddos")
+    target = input("Enter the IP/URL to check for DDoS protection: ")
+    print(f"Checking anti-DDoS protection for {target}...")
+    os.system(f"anti-ddos {target}")
 
 def vuln_scan():
-    print("Escaneando vulnerabilidades... Buscando posibles vulnerabilidades de seguridad en sistemas y servicios.")
-    print("Esta herramienta realiza un análisis de seguridad para encontrar puntos débiles en sistemas informáticos y redes, ayudando a mejorar la seguridad.")
-    os.system("vuln-scan")
+    target = input("Enter the IP/URL for vulnerability scan: ")
+    print(f"Scanning vulnerabilities for {target}...")
+    os.system(f"vuln-scan {target}")
 
 def sniffer_tool():
     print("Iniciando Sniffer... Usamos Wireshark o tcpdump para capturar paquetes de red y analizarlos.")
@@ -116,9 +119,9 @@ def sniffer_tool():
     os.system("sniffer")
 
 def https_requests():
-    print("Realizando solicitudes HTTPS... Herramienta para analizar y realizar solicitudes HTTPS.")
-    print("Esta herramienta permite verificar la seguridad de las comunicaciones HTTPS entre el cliente y el servidor, y realizar pruebas de rendimiento.")
-    os.system("https-requests")
+    target = input("Enter the URL to perform HTTPS requests: ")
+    print(f"Performing HTTPS requests on {target}...")
+    os.system(f"https-requests {target}")
 
 def install_packages():
     print("Instalando paquetes... Instalando los paquetes esenciales para herramientas de pruebas de penetración.")
@@ -181,129 +184,5 @@ def termux_menu():
             break  # Regresar al menú principal
         time.sleep(1)
 
-# Menú de Kali Linux (funciones similares a las de Termux)
-def kali_menu():
-    while True:
-        show_banner("Kali Linux")
-        print("""\
-║ (1) Nmap 🔍: Escaneo de red
-║ (2) Metasploit ⚔️: Framework de explotación
-║ (3) DDoS ⚡: Ataque de denegación de servicio distribuido
-║ (4) DoS 🔥: Ataque de denegación de servicio
-║ (5) Aircrack-ng 📶: Auditoría de redes Wi-Fi
-║ (6) Hydra 🔐: Ataque de fuerza bruta
-║ (7) OSINT 🕵️: Recolección de información pública
-║ (8) Credits 🏷️: Información de créditos
-║ (9) Scan IP 🌐: Escaneo de IPs
-║ (10) Web status 🌐: Comprobar si un sitio web está activo
-║ (11) Anti‑DDoS check 🛡️: Comprobación de protección contra DDoS
-║ (12) Sniffer 👻: Captura de paquetes de red
-║ (13) Install All Packages 💣: Instalación masiva de paquetes
-║ (14) Back ⇦: Volver al menú principal""")
-        print(FOOTER)
-        choice = input("Select an option: ").strip()  # Eliminar espacios extra
-        
-        # Ejecutar opciones de menú
-        if choice == "1" and ask_continue_or_back():
-            nmap_scan()
-        elif choice == "2" and ask_continue_or_back():
-            metasploit_console()
-        elif choice == "3" and ask_continue_or_back():
-            ddos_attack()  # Inicia el ataque DDoS en Kali
-        elif choice == "4" and ask_continue_or_back():
-            dos_attack()  # Inicia el ataque DoS
-        elif choice == "5" and ask_continue_or_back():
-            aircrack_ng()  # Inicia Aircrack-ng
-        elif choice == "6" and ask_continue_or_back():
-            hydra_attack()  # Inicia el ataque Hydra
-        elif choice == "7" and ask_continue_or_back():
-            osint_tools()  # Inicia herramientas OSINT
-        elif choice == "8" and ask_continue_or_back():
-            credits_info()  # Muestra información de créditos
-        elif choice == "9" and ask_continue_or_back():
-            scan_ip()  # Escanea IP
-        elif choice == "10" and ask_continue_or_back():
-            web_status()  # Verifica el estado de un sitio web
-        elif choice == "11" and ask_continue_or_back():
-            anti_ddos_check()  # Verifica protección contra DDoS
-        elif choice == "12" and ask_continue_or_back():
-            sniffer_tool()  # Inicia el sniffer de red
-        elif choice == "13" and ask_continue_or_back():
-            install_all_termux_packages()  # Instalar todos los paquetes disponibles
-        elif choice == "14":
-            break  # Regresar al menú principal
-        time.sleep(1)
-
-# Menú de Parrot OS (funciones similares)
-def parrot_menu():
-    while True:
-        show_banner("Parrot OS")
-        print("""\
-║ (1) Nmap 🔍: Escaneo de red
-║ (2) Metasploit ⚔️: Framework de explotación
-║ (3) DDoS ⚡: Ataque de denegación de servicio distribuido
-║ (4) DoS 🔥: Ataque de denegación de servicio
-║ (5) Aircrack-ng 📶: Auditoría de redes Wi-Fi
-║ (6) Hydra 🔐: Ataque de fuerza bruta
-║ (7) OSINT 🕵️: Recolección de información pública
-║ (8) Credits 🏷️: Información de créditos
-║ (9) Scan IP 🌐: Escaneo de IPs
-║ (10) Web status 🌐: Comprobar si un sitio web está activo
-║ (11) Anti‑DDoS check 🛡️: Comprobación de protección contra DDoS
-║ (12) Sniffer 👻: Captura de paquetes de red
-║ (13) Install All Packages 💣: Instalación masiva de paquetes
-║ (14) Back ⇦: Volver al menú principal""")
-        print(FOOTER)
-        choice = input("Select an option: ").strip()  # Eliminar espacios extra
-        
-        # Ejecutar opciones de menú
-        if choice == "1" and ask_continue_or_back():
-            nmap_scan()
-        elif choice == "2" and ask_continue_or_back():
-            metasploit_console()
-        elif choice == "3" and ask_continue_or_back():
-            ddos_attack()  # Inicia el ataque DDoS en Parrot
-        elif choice == "4" and ask_continue_or_back():
-            dos_attack()  # Inicia el ataque DoS
-        elif choice == "5" and ask_continue_or_back():
-            aircrack_ng()  # Inicia Aircrack-ng
-        elif choice == "6" and ask_continue_or_back():
-            hydra_attack()  # Inicia el ataque Hydra
-        elif choice == "7" and ask_continue_or_back():
-            osint_tools()  # Inicia herramientas OSINT
-        elif choice == "8" and ask_continue_or_back():
-            credits_info()  # Muestra información de créditos
-        elif choice == "9" and ask_continue_or_back():
-            scan_ip()  # Escanea IP
-        elif choice == "10" and ask_continue_or_back():
-            web_status()  # Verifica el estado de un sitio web
-        elif choice == "11" and ask_continue_or_back():
-            anti_ddos_check()  # Verifica protección contra DDoS
-        elif choice == "12" and ask_continue_or_back():
-            sniffer_tool()  # Inicia el sniffer de red
-        elif choice == "13" and ask_continue_or_back():
-            install_all_termux_packages()  # Instalar todos los paquetes disponibles en Parrot
-        elif choice == "14":
-            break  # Regresar al menú principal
-        time.sleep(1)
-
-# Llamar al menú de Termux, Kali o Parrot según la selección inicial
-def main_menu():
-    while True:
-        print("""\
-(1) Termux
-(2) Kali Linux
-(3) Parrot OS
-(4) Exit""")
-        choice = input("Select the environment: ").strip()
-        if choice == "1":
-            termux_menu()
-        elif choice == "2":
-            kali_menu()
-        elif choice == "3":
-            parrot_menu()
-        elif choice == "4":
-            break
-
-if __name__ == "__main__":
-    main_menu()
+# Llamar al menú de Termux, Kali Linux o Parrot OS según se desee
+termux_menu()
