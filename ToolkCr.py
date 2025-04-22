@@ -118,7 +118,7 @@ def termux_menu():
         elif choice == "5" and ask_continue_or_back():
             ddos_attack()  # Inicia el ataque DDoS con la función que registrará los bots y sus estados
         elif choice == "12":
-            install_packages()  # Instalar todos los paquetes necesarios básicos
+            install_all_packages()  # Instalar todos los paquetes necesarios básicos
         elif choice == "13":
             install_all_packages()  # Instalar todos los paquetes disponibles en Termux
         elif choice == "14":
